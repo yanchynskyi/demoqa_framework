@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { ElementsPage } from "../page-objects/ElementsPage";
 import { TextBoxPage } from "../page-objects/TextBoxPage";
+import { CheckBoxPage } from "../page-objects/CheckBoxPage";
+import { RadioButtonPage } from "../page-objects/RadioButtonPage";
 
 test("verify that Elements page is opened", async ({ page }) => {
   const elementPage = new ElementsPage(page);
@@ -37,4 +39,31 @@ test("verify text box", async ({ page }) => {
   expect(permanentAdressValue).toContain("Chikago, Green Street");
 });
 
-test("verify check box", async ({ page }) => {});
+test("verify check box", async ({ page }) => {
+  const checkboxPage = new CheckBoxPage(page);
+  await checkboxPage.goto();
+  await checkboxPage.getCheckBoxTitle.isVisible();
+  await checkboxPage.getCheckBox.isVisible();
+  const checkbox = checkboxPage.getCheckBox.click();
+  const text = await checkboxPage.getText.textContent();
+  expect(text).toContain("You have selected :");
+});
+
+test("verify radio button", async ({ page }) => {
+  const radiobuttonPage = new RadioButtonPage(page);
+  await radiobuttonPage.goto();
+  await radiobuttonPage.getTitle.isVisible();
+  const questionTextActual =
+    await radiobuttonPage.getQuestionText.textContent();
+  expect(questionTextActual).toContain("Do you like the site?");
+
+  await radiobuttonPage.getOptionYes.click();
+  const textAfterClickingYes =
+    await radiobuttonPage.getTextAfterOption.textContent();
+  expect(textAfterClickingYes).toContain("Yes");
+
+  await radiobuttonPage.getOptionImpressive.click();
+  const textAfterClickingImpressive =
+    await radiobuttonPage.getTextAfterOption.textContent();
+  expect(textAfterClickingImpressive).toContain("Impressive");
+});
